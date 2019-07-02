@@ -14,7 +14,6 @@ const { dinosaurs, humans, movies } = require('./datasets/dinosaurs');
 
 
 
-
 // SINGLE DATASETS
 // =================================================================
 
@@ -24,21 +23,29 @@ const kittyPrompts = {
     
     // Return an array of just the names of kitties who are orange e.g.
     // ['Tiger', 'Snickers']
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = kitties.filter(kitty => kitty.color === 'orange').map(kitty => kitty.name);
+
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We want to return an array of names of kitties that have a value
+    // of orange in the color properties. We could use an if statement to 
+    // return kitties with orange values in their color properties, or we
+    // can first filter (which will return each orange kitty object), and
+    // then run map to return only the names of the orange kitties in the
+    // result. I chained these to prototype methods together. 
   },
 
   sortByAge() {
     // Sort the kitties by their age
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = kitties.sort((a, b)=> b.age - a.age);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We want to sort the kitties, which requires the sort prototype 
+    // method. It takes a callback function as an argument, which will
+    // take the arguments a and b. .....................
   },
 
   growUp() {
@@ -55,7 +62,11 @@ const kittyPrompts = {
     // },
     // ...etc]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+
+    const result = kitties.map(function(kitty) {
+        kitty.age +=2;
+        return kitty
+    })
     return result;
   }
 };
@@ -86,8 +97,16 @@ const clubPrompts = {
     //   Pam: ['Drama', 'Art', 'Chess'],
     //   ...etc
     // }
+    let result = {}
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    clubs.forEach(function(club, index){
+        club.members.forEach(function(member) {
+            if (!result[member]) {
+                result[member] = [];
+            }; 
+            result[member].push(club.club);
+        });
+    });
     return result;
 
     // Annotation:
@@ -114,6 +133,7 @@ const clubPrompts = {
 // DATASET: mods from ./datasets/mods
 const modPrompts = {
   studentsPerMod() {
+    
     // Return an array of objects where the keys are mod (the number of the module)
     // and studentsPerInstructor (how many students per instructor there are for that mod) e.g.
     // [
@@ -123,13 +143,16 @@ const modPrompts = {
     //   { mod: 4, studentsPerInstructor: 8 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = []
+
+    mods.forEach((module, index)=>result.push({mod: parseInt(`${module.mod}`), studentsPerInstructor: parseInt(`${module.students}` / parseInt(`${module.instructors}`))}))
     return result;
 
     // Annotation:
     // Write your annotation here as a comment
   }
 };
+
 
 
 
