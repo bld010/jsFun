@@ -173,6 +173,7 @@ const modPrompts = {
 // DATASET: cakes from ./datasets/cakes
 const cakePrompts = {
   stockPerCake() {
+  
     // Return an array of objects that include just the flavor of the cake and how
     // much of that cake is in stock e.g.
     // [ 
@@ -181,7 +182,11 @@ const cakePrompts = {
     //    ..etc
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    
+    const result = cakes.reduce((acc, cake) => {
+      acc.push({'flavor': cake.cakeFlavor, 'inStock': cake.inStock});
+      return acc
+    }, []);
     return result;
 
     // Annotation:
@@ -209,7 +214,11 @@ const cakePrompts = {
     // ..etc
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.filter((cake) => {
+      if (cake.inStock > 0) {
+        return cake;
+      }
+    });
     return result;
 
     // Annotation:
@@ -220,7 +229,10 @@ const cakePrompts = {
     // Return the total amount of cakes in stock e.g.
     // 59
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.reduce((acc, cake) => {
+      acc += cake.inStock;
+      return acc;
+    }, 0);
     return result;
 
     // Annotation:
@@ -231,8 +243,14 @@ const cakePrompts = {
     // Return an array of all unique toppings (no duplicates) needed to bake
     // every cake in the dataset e.g.
     // ['dutch process cocoa', 'toasted sugar', 'smoked sea salt', 'berries', ..etc]
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    
+    const result = cakes.reduce((acc, cake) => {
+      cake.toppings.forEach(topping => {
+        if (!acc.includes(topping)) {
+        acc.push(topping)
+      }})
+      return acc
+    }, []);
     return result;
 
     // Annotation:
@@ -250,9 +268,18 @@ const cakePrompts = {
     //    ...etc
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
-
+    const result = cakes.reduce((acc, cake) => {
+        cake.toppings.forEach(topping => {
+        if (!acc[topping]) {
+          acc[topping] = 1;
+        } else {
+          acc[topping]++;
+        }
+      })
+      return acc;
+    }, {})
+  
+    return result
     // Annotation:
     // Write your annotation here as a comment
   }
@@ -285,7 +312,7 @@ const classPrompts = {
     //   { roomLetter: 'G', program: 'FE', capacity: 29 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.filter(classroom => classroom.program === 'FE');
     return result;
 
     // Annotation:
@@ -300,7 +327,19 @@ const classPrompts = {
     //   beCapacity: 96
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.reduce((acc, classroom) => {
+      let feCapacity = classrooms.filter(classroom => classroom.program === 'FE').reduce((acc2, classroom) => {
+        acc2 += classroom.capacity;
+        acc.feCapacity = acc2
+        return acc2
+      }, 0);
+      let beCapacity = classrooms.filter(classroom => classroom.program === 'BE').reduce((acc3, classroom) => {
+        acc3 += classroom.capacity;
+        acc.beCapacity = acc3;
+        return acc3
+      }, 0)
+      return acc;
+    }, {});
     return result;
 
     // Annotation:
@@ -310,7 +349,9 @@ const classPrompts = {
   sortByCapacity() {
     // Return the array of classrooms sorted by their capacity (least capacity to greatest)
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.sort((a, b) => {
+      return a.capacity - b.capacity;
+    });
     return result;
 
     // Annotation:
@@ -340,7 +381,10 @@ const breweryPrompts = {
     // Return the total beer count of all beers for every brewery e.g.
     // 40
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries.reduce((acc, brewery) => {
+      acc += brewery.beers.length;
+      return acc
+    }, 0);
     return result;
 
     // Annotation:
@@ -356,7 +400,10 @@ const breweryPrompts = {
     // ...etc.
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries.reduce((acc, brewery) => {
+      acc.push({'name': brewery.name, 'beerCount': brewery.beers.length});
+      return acc
+    }, []);
     return result;
 
     // Annotation:
@@ -368,7 +415,14 @@ const breweryPrompts = {
     // e.g.
     // { name: 'Barrel Aged Nature\'s Sweater', type: 'Barley Wine', abv: 10.9, ibu: 40 }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries.reduce((acc, brewery) => {
+      let highestAbv = brewery.beers.forEach((beer) => {
+        if (beer.abv > acc.abv) {
+          acc = beer;
+        }
+      })
+      return acc;
+    }, {abv: 0})
     return result;
 
     // Annotation:
