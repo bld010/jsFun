@@ -535,7 +535,23 @@ let cohortCounts = cohorts.map(cohort => {
     //     Will: [1, 2, 3, 4]
     //   }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+
+    const result = instructors.reduce((acc, instructor) => {
+      cohorts.map(cohort => {
+        instructor.teaches.map(subject => {
+          if (cohort.curriculum.includes(subject)) {
+            // console.log(cohort.module, subject, instructor.name, instructor.teaches)
+            if (!acc[instructor.name]) {
+          acc[instructor.name] = []
+      } if (!acc[instructor.name].includes(cohort.module)) {
+        acc[instructor.name].push(cohort.module)
+      }
+          }
+          return instructor
+        })
+      })
+      return acc
+    }, {})
     return result;
 
     // Annotation:
