@@ -470,7 +470,14 @@ const turingPrompts = {
     //  { name: 'Robbie', studentCount: 18 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = instructors.reduce((acc, instructor) => {
+      cohorts.forEach(cohort => {
+        if (cohort.module === instructor.module) {
+          acc.push({"name": instructor.name, "studentCount": cohort.studentCount})
+        }
+      })
+      return acc;
+    },[]);
     return result;
 
     // Annotation:
@@ -484,7 +491,29 @@ const turingPrompts = {
     // cohort1804: 10.5
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+
+
+let cohortCounts = cohorts.map(cohort => {
+  instructors.map(instructor => {
+    if(!cohort.instructorCount && cohort.module === instructor.module) {
+      cohort.instructorCount = 1
+    } else {
+    if (cohort.module === instructor.module) {
+      cohort.instructorCount++
+    }
+  }
+  })
+  return cohort
+})
+
+
+
+    const result = cohortCounts.reduce((acc, cohort) => {
+      if (!acc[`cohort${cohort.cohort}`]) {
+        acc[`cohort${cohort.cohort}`] = cohort.studentCount /cohort.instructorCount;
+      } 
+        return acc;
+    }, {})
     return result;
 
     // Annotation:
