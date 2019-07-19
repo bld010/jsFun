@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { kitties } = require('./datasets/kitties');
 const { clubs } = require('./datasets/clubs');
 const { mods } = require('./datasets/mods');
@@ -540,12 +542,11 @@ let cohortCounts = cohorts.map(cohort => {
       cohorts.map(cohort => {
         instructor.teaches.map(subject => {
           if (cohort.curriculum.includes(subject)) {
-            // console.log(cohort.module, subject, instructor.name, instructor.teaches)
             if (!acc[instructor.name]) {
-          acc[instructor.name] = []
-      } if (!acc[instructor.name].includes(cohort.module)) {
-        acc[instructor.name].push(cohort.module)
-      }
+              acc[instructor.name] = []
+            } if (!acc[instructor.name].includes(cohort.module)) {
+              acc[instructor.name].push(cohort.module)
+            }
           }
           return instructor
         })
@@ -555,7 +556,16 @@ let cohortCounts = cohorts.map(cohort => {
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // I needed to return an object, so I started with a reduce
+    // I wanted to iterate through the cohorts so I could access 
+    // each cohort's information while I iterated through each instructor
+    // If the cohort's curriculum included the subject from instructor.teaches
+    // then i check to see if the instructor exists in the accumulator array
+    // if it didn't, i created the property and assigned the value to an empty
+    // array. If it did already exist, then i checked to see if the module 
+    // was already pushed into the array (to prevent duplicates). If it didn't
+    // already include the module number, then i pushed that into the accumulator
+    // object at the instructor's name's property. 
   },
 
   curriculumPerTeacher() {
@@ -568,7 +578,20 @@ let cohortCounts = cohorts.map(cohort => {
     //   recursion: [ 'Pam', 'Leta' ]
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = instructors.reduce((acc, instructor) => {
+      instructor.teaches.forEach(topic => {
+        if (!acc[topic]) {
+          acc[topic] = []
+          acc[topic].push(instructor.name)
+        }
+        if (acc[topic] && !Object.values(acc[topic]).includes(instructor.name)) {
+          acc[topic].push(instructor.name)
+        
+        }
+      })
+      return acc 
+    }, {})
+      
     return result;
 
     // Annotation:
@@ -603,7 +626,26 @@ const bossPrompts = {
     //   { bossName: 'Scar', sidekickLoyalty: 16 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+
+    let bossObjects = Object.keys(bosses).map(bossObjKey => {
+      return bosses[bossObjKey]
+    })
+    
+    let result = bossObjects.reduce((acc, bossObj) => {
+      acc.push(sidekicks.reduce((acc2, sidekick) => {
+        if (!acc2.bossName && sidekick.boss === bossObj.name) {
+          acc2.bossName = sidekick.boss;
+          acc2.sidekickLoyalty = 0;
+          console.log(sidekick.loyaltyToBoss)
+        }
+        if (sidekick.boss === bossObj.name) {
+          acc2.sidekickLoyalty += sidekick.loyaltyToBoss
+          console.log(sidekick.loyaltyToBoss)
+        }
+        return acc2
+      }, {}))
+      return acc
+    }, [])
     return result;
 
     // Annotation:
@@ -644,12 +686,21 @@ const astronomyPrompts = {
     //     lightYearsFromEarth: 640,
     //     color: 'red' }
     // ]
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let starNames = Object.keys(constellations).reduce((acc, constellation) => {
+      return acc.concat(constellations[constellation].stars)
+    }, [])
+    
+    const result = stars.filter(star => {
+      return starNames.includes(star.name)
+    });
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // I accessed all of the properties of the constellations object, and
+    // then put all of the constellation.star names into one array with 
+    // a reduce method. I then filtered through the stars array and returned 
+    // any stars with a name that are found in the starNames array. It returns
+    // any star that makes the starNames.includes(star.name) statement true. 
   },
 
   starsByColor() {
@@ -663,11 +714,23 @@ const astronomyPrompts = {
     //   red: [{obj}]
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = stars.reduce((acc, star) => {
+      if (!acc[star.color]) {
+        acc[star.color] = [star]
+      } else {
+        acc[star.color].push(star)
+      }
+      return acc
+    }, {})
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // I reduced the stars array into an object with colors as keys;
+    // For each star, I checked if the color exists as a property in the 
+    // accumulator object. If it doesn't, I create that property within the 
+    // accumulator object and set it equal to an array with that star. 
+    // If the color property already exists in the array, I push the star into 
+    // the property with it's matching color. 
   },
 
   constellationsStarsExistIn() {
@@ -685,7 +748,15 @@ const astronomyPrompts = {
     //    "The Little Dipper" ]
 
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = stars.sort((starA, starB) => {
+      starB.visualMagnitude - starA.visualMagnitude;
+    }).map(star => {
+      return star.constellation;
+    }).filter(star => {
+      if (star !== '') {
+        return star
+      }
+    });
     return result;
 
     // Annotation:
@@ -716,7 +787,18 @@ const ultimaPrompts = {
     // Return the sum of the amount of damage for all the weapons that our characters can use
     // Answer => 113
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = characters.reduce((acc, character) => {
+      acc = acc.concat(character.weapons)
+      return acc
+    }, []).reduce((acc, weapon) => {
+      Object.keys(weapons).forEach(key => {
+        if (weapon === key) {
+          acc += weapons[key].damage;
+        }
+      })
+      return acc
+    }, 0) 
+
     return result;
 
     // Annotation:
@@ -728,7 +810,19 @@ const ultimaPrompts = {
     // Return the sum damage and total range for each character as an object. 
     // ex: [ { Avatar: { damage: 27, range: 24 }, { Iolo: {...}, ...}
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = characters.reduce((acc, character) => {
+      let newObj = {}
+      newObj[character.name] = {damage: 0, range: 0};
+      Object.keys(weapons).forEach(weaponKey => {
+        if (character.weapons.includes(weaponKey)) {
+          newObj[character.name].damage += weapons[weaponKey].damage;
+          newObj[character.name].range += weapons[weaponKey].range;
+        }
+      })
+      acc.push(newObj)
+      return acc;
+    }, [])
+
     return result;
 
     // Annotation:

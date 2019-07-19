@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const constellations = {
   orion: {
     names: ['Orion', 'The Hunter', 'The Giant', 'The Deer'],
